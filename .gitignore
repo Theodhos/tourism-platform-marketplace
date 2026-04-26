@@ -3,9 +3,9 @@ node_modules
 out
 .env.local
 .env
+.env.example
 *.env
 coverage
 *.log
 dist
 *.tsbuildinfo
-!.env.example

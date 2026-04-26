@@ -72,73 +72,109 @@ export default async function ServicesPage({
 
   return (
     <section className="page-shell py-8 sm:py-10">
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="surface overflow-hidden">
-          <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="relative min-h-[260px] sm:min-h-[320px]">
+          <div className="grid min-h-[520px] gap-0 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="relative min-h-[280px] sm:min-h-[320px] lg:min-h-0">
               <Image
                 src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"
                 alt="Marketplace"
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/35 to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white sm:p-8">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-100">Marketplace</p>
-                <h1 className="display-font mt-3 max-w-2xl text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent lg:bg-gradient-to-r lg:from-slate-950/80 lg:via-slate-950/35 lg:to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8 lg:left-0 lg:right-auto lg:top-0 lg:flex lg:h-full lg:w-full lg:flex-col lg:justify-end lg:p-8">
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] backdrop-blur">
+                    Marketplace
+                  </span>
+                  <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] backdrop-blur">
+                    Verified
+                  </span>
+                </div>
+                <h1 className="display-font mt-4 max-w-xl text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
                   Verified services, things to do, and places to stay
                 </h1>
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-brand-50 sm:text-base">
+                <p className="mt-4 max-w-xl text-sm leading-7 text-brand-50 sm:text-base">
                   Each listing is reviewed before it goes live. Travelers can discover experiences, compare options, and filter by what matters most.
                 </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <span className="rounded-full bg-white/15 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                    Trusted by travelers
+                  </span>
+                  <span className="rounded-full bg-white/15 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em]">
+                    Curated results
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="p-5 sm:p-6">
-              <p className="eyebrow">Live overview</p>
-              <div className="mt-4 grid grid-cols-1 gap-3 text-center sm:grid-cols-3 sm:gap-4">
-                <div className="rounded-[1.5rem] bg-brand-50 p-4">
-                  <p className="text-2xl font-black">{listings.length}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-brand-700">Results</p>
+
+            <div className="flex flex-col justify-between p-5 sm:p-6">
+              <div>
+                <p className="eyebrow">Live overview</p>
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                  <div className="rounded-[1.5rem] bg-brand-50 p-4">
+                    <p className="text-2xl font-black">{listings.length}</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-brand-700">Results</p>
+                  </div>
+                  <div className="rounded-[1.5rem] bg-slate-50 p-4">
+                    <p className="text-2xl font-black">Trust</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-600">Moderated</p>
+                  </div>
+                  <div className="rounded-[1.5rem] bg-emerald-50 p-4">
+                    <p className="text-2xl font-black">Live</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-emerald-700">Active</p>
+                  </div>
                 </div>
-                <div className="rounded-[1.5rem] bg-slate-50 p-4">
-                  <p className="text-2xl font-black">Trust</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-600">Moderated</p>
-                </div>
-                <div className="rounded-[1.5rem] bg-emerald-50 p-4">
-                  <p className="text-2xl font-black">Live</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-emerald-700">Active</p>
+                <div className="mt-6 rounded-[1.5rem] bg-slate-50 p-5">
+                  <p className="text-sm text-slate-600">Selected category</p>
+                  <p className="mt-2 text-2xl font-black text-slate-950">
+                    {activeCategory ? getCategoryLabel(activeCategory) : "All categories"}
+                  </p>
+                  <p className="mt-2 text-sm text-slate-600">
+                    Use the filters below to refine by subcategory, location, country, price, rating, and featured status.
+                  </p>
                 </div>
               </div>
-              <div className="mt-6 rounded-[1.5rem] bg-slate-50 p-5">
-                <p className="text-sm text-slate-600">Selected category</p>
-                <p className="mt-2 text-2xl font-black text-slate-950">
-                  {activeCategory ? getCategoryLabel(activeCategory) : "All categories"}
-                </p>
-                <p className="mt-2 text-sm text-slate-600">
-                  Use the filters below to refine by subcategory, location, country, price, rating, and featured status.
+
+              <div className="mt-6 rounded-[1.5rem] bg-slate-950 p-5 text-white">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-300">Quick note</p>
+                <p className="mt-3 text-lg font-bold leading-7">
+                  Discovery first, booking second. That structure keeps users exploring while still making action easy.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="surface p-5 sm:p-6">
-          <p className="eyebrow">Trending now</p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {[
-              "Can not-miss tours",
-              "Luxury stays",
-              "Family experiences",
-              "Private transfers"
-            ].map((item) => (
-              <div key={item} className="rounded-[1.4rem] border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-semibold text-slate-800">{item}</p>
-              </div>
-            ))}
+        <div className="grid gap-6">
+          <div className="surface p-5 sm:p-6">
+            <p className="eyebrow">Trending now</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+              {[
+                "Can not-miss tours",
+                "Luxury stays",
+                "Family experiences",
+                "Private transfers"
+              ].map((item) => (
+                <div key={item} className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4">
+                  <p className="text-sm font-semibold text-slate-800">{item}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-6 rounded-[1.5rem] bg-slate-950 p-5 text-white">
-            <p className="text-sm uppercase tracking-[0.24em] text-slate-300">Why it works</p>
-            <p className="mt-3 text-lg font-bold">A clean discovery layer with a TripAdvisor-style filter model and a booking-first presentation.</p>
+          <div className="surface p-5 sm:p-6">
+            <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Why it works</p>
+            <p className="mt-3 text-lg font-bold text-slate-950">
+              A clean discovery layer with a TripAdvisor-style filter model and a booking-first presentation.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+              {["Fast filtering", "Editorial feel", "Verified content", "Mobile-ready"].map((item) => (
+                <div key={item} className="rounded-[1.25rem] border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700">
+                  {item}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
