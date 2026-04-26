@@ -52,9 +52,14 @@ export default function Header() {
             Blog
           </Link>
           {me ? (
-            <Link href="/dashboard" className={navLinkClass}>
-              Dashboard
-            </Link>
+            <>
+              <Link href="/dashboard" className={navLinkClass}>
+                Dashboard {me.name}
+              </Link>
+              <button type="button" onClick={logout} className={navLinkClass}>
+                Logout
+              </button>
+            </>
           ) : null}
           <Link href="/listings/add" className={navLinkClass}>
             Add Listing
