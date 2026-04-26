@@ -131,6 +131,16 @@ export default function Header() {
               <Link href="/listings/add" className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-white" onClick={() => setMobileOpen(false)}>
                 Add Listing
               </Link>
+              {me ? (
+                <>
+                  <Link href="/dashboard" className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-white" onClick={() => setMobileOpen(false)}>
+                    Dashboard {me.name}
+                  </Link>
+                  <button type="button" onClick={logout} className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-white">
+                    Logout
+                  </button>
+                </>
+              ) : null}
               {me?.role === "admin" ? (
                 <Link href="/admin" className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-white" onClick={() => setMobileOpen(false)}>
                   Admin
