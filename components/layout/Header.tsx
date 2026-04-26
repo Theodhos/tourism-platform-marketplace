@@ -51,6 +51,11 @@ export default function Header() {
           <Link href="/blog" className={navLinkClass}>
             Blog
           </Link>
+          {me ? (
+            <Link href="/dashboard" className={navLinkClass}>
+              Dashboard
+            </Link>
+          ) : null}
           <Link href="/listings/add" className={navLinkClass}>
             Add Listing
           </Link>
