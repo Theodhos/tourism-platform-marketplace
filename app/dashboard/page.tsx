@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { CalendarDays, Clock3, Heart, MessageSquareText, ShieldCheck, Star, User2 } from "lucide-react";
+import { CalendarDays, Clock3, Heart, MessageSquareText, ShieldCheck, Star } from "lucide-react";
 import { getAuthUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Listing from "@/models/Listing";
@@ -7,6 +7,7 @@ import User from "@/models/User";
 import Review from "@/models/Review";
 import Activity from "@/models/Activity";
 import UserListingTable from "@/components/dashboard/UserListingTable";
+import ProfilePanel from "@/components/dashboard/ProfilePanel";
 import Button from "@/components/ui/Button";
 import ListingCard from "@/components/ListingCard";
 
@@ -28,11 +29,17 @@ export default async function DashboardPage() {
   const totalReviews = reviews.length;
   const totalFavorites = favorites.length;
   const joinedAt = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "";
+  const profileUser = {
+    name: user?.name || auth.name,
+    email: user?.email || auth.email,
+    role: auth.role,
+    createdAt: user?.createdAt
+  };
 
   return (
     <section className="page-shell py-8 sm:py-10">
       <div className="surface overflow-hidden p-6 sm:p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="grid gap-6 xl:grid-cols-[1fr_0.95fr] xl:items-start">
           <div className="max-w-3xl">
             <p className="eyebrow">Your area</p>
             <h1 className="display-font mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
@@ -41,28 +48,31 @@ export default async function DashboardPage() {
             <p className="mt-4 max-w-2xl text-slate-600">
               Your listings, favorites, reviews, and platform activity in one place. Everything you do on the platform is surfaced here clearly.
             </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button href="/listings/add">Add Listing</Button>
-            <Button href="/services" variant="ghost">
-              Explore services
-            </Button>
-          </div>
-        </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            { label: "Account", value: auth.name, icon: User2 },
-            { label: "Member since", value: joinedAt || "Now", icon: CalendarDays },
-            { label: "Email", value: auth.email, icon: MessageSquareText },
-            { label: "Role", value: auth.role, icon: ShieldCheck }
-          ].map((item) => (
-            <div key={item.label} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
-              <item.icon className="h-5 w-5 text-brand-600" />
-              <p className="mt-3 text-xs uppercase tracking-[0.18em] text-slate-500">{item.label}</p>
-              <p className="mt-1 break-words text-sm font-bold text-slate-950">{item.value}</p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Button href="/listings/add">Add Listing</Button>
+              <Button href="/services" variant="ghost">
+                Explore services
+              </Button>
             </div>
-          ))}
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {[
+                { label: "Member since", value: joinedAt || "Now", icon: CalendarDays },
+                { label: "Role", value: auth.role, icon: ShieldCheck },
+                { label: "Listings", value: String(listings.length), icon: MessageSquareText },
+                { label: "Reviews", value: String(totalReviews), icon: Star }
+              ].map((item) => (
+                <div key={item.label} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
+                  <item.icon className="h-5 w-5 text-brand-600" />
+                  <p className="mt-3 text-xs uppercase tracking-[0.18em] text-slate-500">{item.label}</p>
+                  <p className="mt-1 break-words text-sm font-bold text-slate-950">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <ProfilePanel user={profileUser} />
         </div>
       </div>
 

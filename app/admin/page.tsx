@@ -30,7 +30,8 @@ const activityStyles: Record<string, { label: string; tone: string }> = {
   listing_approved: { label: "Approved", tone: "bg-emerald-50 text-emerald-700" },
   listing_rejected: { label: "Rejected", tone: "bg-rose-50 text-rose-700" },
   review_created: { label: "Review", tone: "bg-brand-50 text-brand-700" },
-  blog_created: { label: "Blog", tone: "bg-violet-50 text-violet-700" }
+  blog_created: { label: "Blog", tone: "bg-violet-50 text-violet-700" },
+  profile_updated: { label: "Profile", tone: "bg-cyan-50 text-cyan-700" }
 };
 
 export default async function AdminPage() {

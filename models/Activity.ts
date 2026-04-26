@@ -3,6 +3,7 @@ import { Schema, model, models, type Document } from "mongoose";
 export type ActivityType =
   | "user_registered"
   | "user_logged_in"
+  | "profile_updated"
   | "listing_submitted"
   | "listing_approved"
   | "listing_rejected"
@@ -29,6 +30,7 @@ const ActivitySchema = new Schema<IActivity>(
       enum: [
         "user_registered",
         "user_logged_in",
+        "profile_updated",
         "listing_submitted",
         "listing_approved",
         "listing_rejected",
