@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900;
+  font-family: var(--font-manrope), sans-serif;
+  background-image:
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 24%),
+    radial-gradient(circle at 85% 10%, rgba(14, 165, 233, 0.12), transparent 18%),
+    radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08), transparent 26%),
+    linear-gradient(to bottom, #fbfdff 0%, #f3f7fb 45%, #eef7f0 100%);
+}
+
+::selection {
+  background: rgba(34, 153, 120, 0.18);
+  color: #0f172a;
+}
+
+a {
+  @apply transition-colors;
+}
+
+.page-shell {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.surface {
+  @apply rounded-[2rem] border border-white/70 bg-white/90 shadow-soft backdrop-blur-xl;
+}
+
+.surface-strong {
+  @apply rounded-[2rem] border border-slate-900/10 bg-slate-950 text-white shadow-soft;
+}
+
+.section-heading {
+  @apply display-font text-3xl font-black tracking-tight text-slate-950 sm:text-4xl;
+}
+
+.eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.24em] text-brand-600;
+}
+
+.chip {
+  @apply inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/85 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur;
+}
+
+.glass {
+  @apply border border-white/60 bg-white/80 backdrop-blur-xl shadow-soft;
+}
+
+.soft-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.display-font {
+  font-family: var(--font-fraunces), serif;
+}
+
+.travel-card {
+  @apply overflow-hidden rounded-[1.8rem] border border-slate-200 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-xl;
+}
+
+.travel-pill {
+  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em];
+}

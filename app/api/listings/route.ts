@@ -1,0 +1,146 @@
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import { getAuthUser } from "@/lib/auth";
+import { sendMail } from "@/lib/mailer";
+import { logActivity } from "@/lib/activity";
+import { slugify } from "@/lib/utils";
+import { getCategorySearchValues, getSubcategorySearchValues } from "@/lib/constants";
+import Listing from "@/models/Listing";
+import User from "@/models/User";
+
+function parseList(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function buildQuery(url: URL) {
+  const search = url.searchParams.get("q")?.trim();
+  const category = url.searchParams.get("category")?.trim();
+  const subcategory = url.searchParams.get("subcategory")?.trim();
+  const location = url.searchParams.get("location")?.trim();
+  const country = url.searchParams.get("country")?.trim();
+  const minPrice = url.searchParams.get("minPrice")?.trim();
+  const maxPrice = url.searchParams.get("maxPrice")?.trim();
+  const minRating = url.searchParams.get("minRating")?.trim();
+  const featured = url.searchParams.get("featured") === "true";
+  const sort = url.searchParams.get("sort") || "latest";
+
+  const query: Record<string, unknown> = { status: "approved" };
+  if (category) query.category = { $in: getCategorySearchValues(category) };
+  if (subcategory) query.subcategory = { $in: getSubcategorySearchValues(category || undefined, subcategory) };
+  if (location) query.location = { $regex: location, $options: "i" };
+  if (country) query.country = { $regex: country, $options: "i" };
+  if (featured) query.featured = true;
+  if (minPrice || maxPrice) {
+    query.price = {};
+    if (minPrice) (query.price as Record<string, number>).$gte = Number(minPrice);
+    if (maxPrice) (query.price as Record<string, number>).$lte = Number(maxPrice);
+  }
+  if (minRating) {
+    query.ratingAverage = { $gte: Number(minRating) };
+  }
+  if (search) {
+    query.$text = { $search: search };
+  }
+
+  const sortQuery: Record<string, 1 | -1> =
+    sort === "popular" ? { views: -1, createdAt: -1 } : { createdAt: -1 };
+  return { query, sortQuery };
+}
+
+export async function GET(request: Request) {
+  try {
+    await connectDB();
+    const url = new URL(request.url);
+    const { query, sortQuery } = buildQuery(url);
+    const listings = await Listing.find(query).sort(sortQuery).populate("owner", "name email role").lean<any>();
+    return NextResponse.json({ listings });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Failed to load listings" }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const auth = await getAuthUser();
+    if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await connectDB();
+    const body = await request.json();
+    const title = String(body.title || "").trim();
+
+    if (!title || !body.description || !body.category || !body.subcategory || !body.location) {
+      return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+    }
+
+    let slug = slugify(title);
+    let counter = 1;
+    while (await Listing.findOne({ slug })) {
+      slug = `${slugify(title)}-${counter++}`;
+    }
+
+    const listing = await Listing.create({
+      owner: auth.id,
+      title,
+      slug,
+      description: body.description,
+      category: body.category,
+      subcategory: body.subcategory,
+      location: body.location,
+      country: body.country || "",
+      address: body.address || "",
+      images: Array.isArray(body.images) ? body.images : [],
+      price: body.price ? Number(body.price) : undefined,
+      priceFrom: body.priceFrom ? Number(body.priceFrom) : undefined,
+      currency: body.currency || "USD",
+      amenities: parseList(body.amenities),
+      tags: parseList(body.tags),
+      highlights: parseList(body.highlights),
+      contactInfo: {
+        phone: body.contactPhone || "",
+        email: body.contactEmail || "",
+        website: body.website || ""
+      },
+      socialLinks: {
+        facebook: body.facebook || "",
+        instagram: body.instagram || "",
+        tiktok: body.tiktok || "",
+        x: body.x || ""
+      },
+      status: "pending"
+    });
+
+    await logActivity({
+      type: "listing_submitted",
+      title: "New listing submitted",
+      description: `${listing.title} is waiting for approval.`,
+      actor: auth.id,
+      actorName: auth.name,
+      listing: listing._id.toString(),
+      listingTitle: listing.title,
+      meta: { category: listing.category, subcategory: listing.subcategory, location: listing.location }
+    });
+
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (adminEmail) {
+      await sendMail({
+        to: adminEmail,
+        subject: "New listing awaiting approval",
+        html: `<p>A new listing titled <strong>${listing.title}</strong> was submitted and is waiting for moderation.</p>`
+      }).catch(() => undefined);
+    }
+
+    const owner = await User.findById(auth.id).lean<any>();
+    return NextResponse.json({ listing, owner });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Failed to create listing" }, { status: 500 });
+  }
+}
